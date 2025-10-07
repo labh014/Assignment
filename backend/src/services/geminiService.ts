@@ -20,6 +20,12 @@ export interface BatchQuizResult {
   topics: string[];
 }
 
+export interface ChatResponse {
+  answer: string;
+  sources: string[];
+  confidence: 'high' | 'medium' | 'low';
+}
+
 /**
  * Generate quiz questions from a batch of pages
  * Uses the summary from previous batch for continuity
@@ -30,7 +36,7 @@ export async function generateBatchQuestions(
   previousSummary: string = '',
   questionsPerPage: number = 2
 ): Promise<BatchQuizResult> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
   
   const totalQuestions = Math.ceil(pageNumbers.length * questionsPerPage);
   const mcqCount = Math.ceil(totalQuestions * 0.6); // 60% MCQs
@@ -120,7 +126,7 @@ export async function generateTargetedQuestions(
   topic: string,
   count: number = 5
 ): Promise<QuizQuestion[]> {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
   
   const prompt = `Generate ${count} quiz questions about "${topic}" based on this context:
 
@@ -165,6 +171,83 @@ Mix question types (MCQs, SAQs, LAQs) and difficulty levels.
   } catch (error) {
     console.error('Error generating targeted questions:', error);
     throw new Error('Failed to generate targeted questions');
+  }
+}
+
+/**
+ * Generate intelligent chat response using RAG results
+ * Takes top 2 Pinecone results and user query to generate contextual answer
+ */
+export async function generateChatResponse(
+  userQuery: string,
+  ragResults: Array<{
+    text: string;
+    score: number;
+    filename: string;
+    chunkIndex: number;
+  }>
+): Promise<ChatResponse> {
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
+    // Prepare context from top 2 results
+    const contextText = ragResults
+      .slice(0, 2) // Take top 2 results
+      .map((result, index) => 
+        `[Source ${index + 1}] (Relevance: ${(result.score * 100).toFixed(1)}%)\n${result.text}`
+      )
+      .join('\n\n');
+
+    const prompt = `
+You are an intelligent AI assistant that helps users understand documents through RAG (Retrieval-Augmented Generation).
+
+CONTEXT FROM DOCUMENT:
+${contextText}
+
+USER QUESTION:
+${userQuery}
+
+INSTRUCTIONS:
+1. Analyze the provided context carefully
+2. Use ONLY the information from the context to answer the user's question
+3. If the context doesn't contain enough information to answer the question, clearly state this
+4. Provide a comprehensive, well-structured answer
+5. Include relevant details and examples from the context
+6. Be conversational and helpful
+7. If you reference specific information, mention which source it came from
+
+RESPONSE FORMAT:
+- Provide a clear, detailed answer
+- Use the context information effectively
+- Be honest about limitations if context is insufficient
+- Maintain a helpful, professional tone
+
+Please provide your response:`;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const answer = response.text();
+
+    // Determine confidence based on relevance scores
+    const avgScore = ragResults.slice(0, 2).reduce((sum, r) => sum + r.score, 0) / 2;
+    let confidence: 'high' | 'medium' | 'low' = 'low';
+    if (avgScore > 0.7) confidence = 'high';
+    else if (avgScore > 0.4) confidence = 'medium';
+
+    // Extract sources
+    const sources = ragResults
+      .slice(0, 2)
+      .map(r => `${r.filename} (chunk ${r.chunkIndex})`);
+
+    return {
+      answer: answer,
+      sources: sources,
+      confidence: confidence
+    };
+
+  } catch (error) {
+    console.error('Error generating chat response:', error);
+    throw new Error('Failed to generate chat response');
   }
 }
 

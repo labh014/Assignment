@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import quizRoutes from './routes/quizRoutes.js';
+import chatRoutes from './routes/chatRoutes.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -22,8 +23,12 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+// Serve uploaded files
+app.use('/uploads', express.static(uploadsDir));
+
 // Routes
 app.use('/api/quiz', quizRoutes);
+app.use('/api/chat', chatRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
@@ -47,6 +52,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
   console.log(`📝 API Health: http://localhost:${PORT}/api/health`);
   console.log(`🎯 Quiz API: http://localhost:${PORT}/api/quiz/generate`);
+  console.log(`💬 Chat API: http://localhost:${PORT}/api/chat`);
   
   
 });
