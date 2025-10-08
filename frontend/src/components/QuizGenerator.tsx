@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Upload, Loader2, CheckCircle, AlertCircle, Home, FileText, PlayCircle } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
+import API_ENDPOINTS from '../config'
 
 interface QuizQuestion {
   id: string
@@ -57,7 +58,7 @@ const QuizGenerator = () => {
   const fetchUploadedPDFs = async () => {
     setLoadingPDFs(true)
     try {
-      const response = await fetch('http://localhost:3000/api/chat/conversations')
+      const response = await fetch(API_ENDPOINTS.CHAT_CONVERSATIONS)
       const data = await response.json()
       
       if (data.success && data.conversations) {
@@ -111,7 +112,7 @@ const QuizGenerator = () => {
     formData.append('batchSize', batchSize.toString())
 
     try {
-      const response = await fetch('http://localhost:3000/api/quiz/generate', {
+      const response = await fetch(API_ENDPOINTS.QUIZ_GENERATE, {
         method: 'POST',
         body: formData,
       })
@@ -145,7 +146,7 @@ const QuizGenerator = () => {
       }
 
       // Get PDF URL (Cloudinary or local)
-      const pdfUrl = pdf.cloudinaryUrl || (pdf.localFileId ? `http://localhost:3000/uploads/${pdf.localFileId}` : null)
+      const pdfUrl = pdf.cloudinaryUrl || (pdf.localFileId ? API_ENDPOINTS.UPLOADS(pdf.localFileId) : null)
       
       if (!pdfUrl) {
         throw new Error('PDF file not available')
@@ -166,7 +167,7 @@ const QuizGenerator = () => {
       formData.append('questionsPerPage', questionsPerPage.toString())
       formData.append('batchSize', batchSize.toString())
 
-      const response = await fetch('http://localhost:3000/api/quiz/generate', {
+      const response = await fetch(API_ENDPOINTS.QUIZ_GENERATE, {
         method: 'POST',
         body: formData,
       })

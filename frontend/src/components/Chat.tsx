@@ -3,6 +3,7 @@ import { Upload, Send, Loader2, CheckCircle, AlertCircle, Home, FileText, Messag
 import { Link } from 'react-router-dom'
 import ReactMarkdown from 'react-markdown'
 import PDFViewer from './PDFViewer'
+import API_ENDPOINTS from '../config'
 
 interface Message {
   id: string
@@ -79,7 +80,7 @@ const Chat = () => {
   const fetchNamespaces = async () => {
     setLoadingNamespaces(true)
     try {
-      const response = await fetch('http://localhost:3000/api/chat/namespaces')
+      const response = await fetch(API_ENDPOINTS.CHAT_NAMESPACES)
       const data = await response.json()
       if (data.success && data.namespaces) {
         setNamespaces(data.namespaces)
@@ -94,7 +95,7 @@ const Chat = () => {
   const fetchConversations = async () => {
     setLoadingConversations(true)
     try {
-      const response = await fetch('http://localhost:3000/api/chat/conversations')
+      const response = await fetch(API_ENDPOINTS.CHAT_CONVERSATIONS)
       const data = await response.json()
       if (data.success && data.conversations) {
         setConversations(data.conversations)
@@ -115,7 +116,7 @@ const Chat = () => {
       setCloudinaryPdfUrl(null) // Clear previous PDF URL
       
       // Load conversation history
-      const response = await fetch(`http://localhost:3000/api/chat/conversations/${namespace}`)
+      const response = await fetch(API_ENDPOINTS.CHAT_CONVERSATION_BY_NAMESPACE(namespace))
       const data = await response.json()
       
       console.log('Conversation history response:', data)
@@ -153,14 +154,14 @@ const Chat = () => {
         } 
         // Fallback to local file
         else if (data.conversation.localFileId) {
-          const localUrl = `http://localhost:3000/uploads/${data.conversation.localFileId}`
+          const localUrl = API_ENDPOINTS.UPLOADS(data.conversation.localFileId)
           setCloudinaryPdfUrl(localUrl)
           console.log('📁 Using local file URL:', localUrl)
         }
         // Last resort: try API endpoint
         else {
           try {
-            const pdfResponse = await fetch(`http://localhost:3000/api/chat/pdf/${namespace}`)
+            const pdfResponse = await fetch(API_ENDPOINTS.CHAT_PDF_URL(namespace))
             const pdfData = await pdfResponse.json()
             
             if (pdfData.success && pdfData.pdfUrl) {
@@ -215,7 +216,7 @@ const Chat = () => {
     formData.append('pdf', file)
 
     try {
-      const response = await fetch('http://localhost:3000/api/chat/upload', {
+      const response = await fetch(API_ENDPOINTS.CHAT_UPLOAD, {
         method: 'POST',
         body: formData,
       })
@@ -241,7 +242,7 @@ const Chat = () => {
           console.log('✅ Stored Cloudinary URL:', data.cloudinaryUrl)
         } else if (data.fileId) {
           // Fallback to local file
-          const localUrl = `http://localhost:3000/uploads/${data.fileId}`
+          const localUrl = API_ENDPOINTS.UPLOADS(data.fileId)
           setCloudinaryPdfUrl(localUrl)
           console.log('📁 Using local file URL:', localUrl)
         }
@@ -295,7 +296,7 @@ const Chat = () => {
     setError(null)
 
     try {
-      const response = await fetch('http://localhost:3000/api/chat/query', {
+      const response = await fetch(API_ENDPOINTS.CHAT_QUERY, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -618,7 +619,7 @@ const Chat = () => {
           <PDFViewer 
             pdfUrl={(() => {
               // Priority: Cloudinary URL > Selected file URL > Uploaded file ID
-              const url = cloudinaryPdfUrl || selectedFileUrl || (uploadedFileId ? `http://localhost:3000/uploads/${uploadedFileId}` : null)
+              const url = cloudinaryPdfUrl || selectedFileUrl || (uploadedFileId ? API_ENDPOINTS.UPLOADS(uploadedFileId) : null)
               console.log('PDF URL being passed to viewer:', url)
               console.log('Cloudinary URL:', cloudinaryPdfUrl)
               console.log('Selected file URL:', selectedFileUrl)
