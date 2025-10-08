@@ -187,7 +187,7 @@ const QuizGenerator = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-6 lg:py-8 px-3 sm:px-4">
       <div className="max-w-6xl mx-auto">
         {/* Navigation */}
         <div className="mb-6">
@@ -200,17 +200,17 @@ const QuizGenerator = () => {
           </Link>
         </div>
         
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Quiz Generator</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 lg:mb-8">Quiz Generator</h1>
 
         {/* Upload Section */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">1. Select PDF</h2>
           
           {/* Tab Selection */}
-          <div className="flex gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 mb-4 sm:mb-6">
             <button
               onClick={() => setUseUploadedFile(false)}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md font-medium transition-colors w-full sm:w-auto ${
                 !useUploadedFile
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -220,7 +220,7 @@ const QuizGenerator = () => {
             </button>
             <button
               onClick={() => setUseUploadedFile(true)}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              className={`px-4 py-2 rounded-md font-medium transition-colors w-full sm:w-auto ${
                 useUploadedFile
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -270,7 +270,7 @@ const QuizGenerator = () => {
                   <p className="text-sm mt-2">Upload a PDF in the Chat section first</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 sm:max-h-96 overflow-y-auto">
                   {uploadedPDFs.map((pdf) => (
                     <div
                       key={pdf.id}
@@ -386,7 +386,7 @@ const QuizGenerator = () => {
             </div>
 
             {/* Summary Stats */}
-            <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
               <div className="bg-blue-50 p-4 rounded-lg">
                 <div className="text-2xl font-bold text-blue-600">{result.totalQuestions}</div>
                 <div className="text-sm text-gray-600">Total Questions</div>

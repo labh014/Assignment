@@ -49,27 +49,28 @@ const TakeQuiz = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
           <button
             onClick={() => navigate('/quiz')}
-            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            className="flex items-center text-gray-600 hover:text-gray-900 transition-colors text-sm sm:text-base"
           >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back to Generator
+            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Back to Generator</span>
+            <span className="sm:hidden">Back</span>
           </button>
-          <h1 className="text-xl font-bold text-gray-900">Quiz Session</h1>
+          <h1 className="text-base sm:text-xl font-bold text-gray-900">Quiz Session</h1>
           <button
             onClick={() => navigate('/')}
-            className="flex items-center text-blue-600 hover:text-blue-700 transition-colors"
+            className="flex items-center text-blue-600 hover:text-blue-700 transition-colors text-sm sm:text-base"
           >
-            <Home className="w-5 h-5 mr-2" />
-            Home
+            <Home className="w-4 h-4 sm:w-5 sm:h-5 mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Home</span>
           </button>
         </div>
       </div>
 
       {/* Quiz Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 lg:py-8">
         <InteractiveQuiz questions={questions} onClose={handleClose} />
       </div>
     </div>

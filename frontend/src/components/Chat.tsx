@@ -373,13 +373,13 @@ const Chat = () => {
         </div>
       </div>
 
-      <div className="flex-1 max-w-full w-full mx-auto px-4 py-4 flex flex-col lg:flex-row gap-4 overflow-hidden">
+      <div className="flex-1 max-w-full w-full mx-auto px-2 sm:px-4 py-2 sm:py-4 flex flex-col lg:flex-row gap-3 sm:gap-4 overflow-hidden">
         {/* Left Sidebar - Upload & Settings */}
-        <div className="w-full lg:w-80 flex-shrink-0 space-y-4 overflow-y-auto lg:max-h-full">
+        <div className="w-full lg:w-80 flex-shrink-0 space-y-3 sm:space-y-4 overflow-y-auto lg:max-h-full max-h-64 lg:max-h-none">
           {/* Upload Section */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
-            <h2 className="text-lg font-semibold mb-3 flex items-center">
-              <Upload className="w-5 h-5 mr-2 text-blue-600" />
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
+            <h2 className="text-base sm:text-lg font-semibold mb-2 sm:mb-3 flex items-center">
+              <Upload className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-600" />
               Upload PDF
             </h2>
             
@@ -431,7 +431,7 @@ const Chat = () => {
           </div>
 
           {/* Document Selection */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4">
             <h2 className="text-lg font-semibold mb-3">Select Document</h2>
             
             <div className="space-y-2">
@@ -468,7 +468,7 @@ const Chat = () => {
           </div>
 
           {/* Recent Conversations */}
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 hidden lg:block">
             <h2 className="text-lg font-semibold mb-3">Recent Conversations</h2>
             
             <div className="space-y-2 max-h-48 overflow-y-auto">
@@ -515,7 +515,7 @@ const Chat = () => {
         </div>
 
         {/* Main Chat Area */}
-        <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col min-w-0 overflow-hidden">
+        <div className="flex-1 bg-white rounded-lg shadow-sm border border-gray-200 flex flex-col min-w-0 overflow-hidden h-96 lg:h-auto">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {loadingHistory ? (
@@ -615,7 +615,7 @@ const Chat = () => {
         </div>
 
         {/* PDF Viewer - Right Side */}
-        <div className="w-full lg:w-96 flex-shrink-0 overflow-hidden">
+        <div className="w-full lg:w-96 flex-shrink-0 overflow-hidden hidden lg:block">
           <PDFViewer 
             pdfUrl={(() => {
               // Priority: Cloudinary URL > Selected file URL > Uploaded file ID

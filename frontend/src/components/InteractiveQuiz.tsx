@@ -166,14 +166,14 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
 
   if (isSubmitted) {
     return (
-      <div className="bg-white rounded-lg shadow-lg p-6">
+      <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
         {/* Results Header */}
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold mb-4">Quiz Results</h2>
+        <div className="text-center mb-6 sm:mb-8">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-4">Quiz Results</h2>
           
           {/* Score Circle */}
           <div className="relative inline-block">
-            <svg className="w-48 h-48" viewBox="0 0 200 200">
+            <svg className="w-32 h-32 sm:w-40 sm:h-40 lg:w-48 lg:h-48" viewBox="0 0 200 200">
               <circle
                 cx="100"
                 cy="100"
@@ -195,20 +195,20 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <div className="text-4xl font-bold">{score}/{totalQuestions}</div>
-              <div className="text-lg text-gray-600">{percentage.toFixed(0)}%</div>
+              <div className="text-2xl sm:text-3xl lg:text-4xl font-bold">{score}/{totalQuestions}</div>
+              <div className="text-sm sm:text-base lg:text-lg text-gray-600">{percentage.toFixed(0)}%</div>
             </div>
           </div>
 
           {/* Performance Badge */}
-          <div className={`inline-block px-6 py-2 rounded-full text-lg font-semibold mt-4 ${performance.bgColor} ${performance.color}`}>
+          <div className={`inline-block px-4 sm:px-6 py-1.5 sm:py-2 rounded-full text-base sm:text-lg font-semibold mt-3 sm:mt-4 ${performance.bgColor} ${performance.color}`}>
             {performance.level}
           </div>
         </div>
 
         {/* Topic Performance */}
-        <div className="mb-8">
-          <h3 className="text-xl font-semibold mb-4">Performance by Topic</h3>
+        <div className="mb-6 sm:mb-8">
+          <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Performance by Topic</h3>
           <div className="space-y-3">
             {Object.entries(topicPerformance).map(([topic, perf]) => {
               const topicPercentage = (perf.correct / perf.total) * 100
@@ -245,9 +245,9 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
         </div>
 
         {/* Question by Question Review */}
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold mb-4">Detailed Review</h3>
-          <div className="space-y-4 max-h-96 overflow-y-auto">
+        <div className="mb-4 sm:mb-6">
+          <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Detailed Review</h3>
+          <div className="space-y-3 sm:space-y-4 max-h-64 sm:max-h-96 overflow-y-auto">
             {questions.map((q, idx) => {
               const userAnswer = userAnswers.find(a => a.questionId === q.id)
               const isCorrect = userAnswer?.isCorrect
@@ -322,7 +322,7 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <button
             onClick={onClose}
             className="flex-1 bg-gray-600 text-white py-3 px-4 rounded-md font-medium hover:bg-gray-700"
@@ -347,18 +347,18 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
 
   // Quiz taking mode
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6">
+    <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 pb-3 sm:pb-4 border-b">
         <div>
-          <h2 className="text-2xl font-bold">Interactive Quiz</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-xl sm:text-2xl font-bold">Interactive Quiz</h2>
+          <p className="text-xs sm:text-sm text-gray-600">
             Question {currentQuestionIndex + 1} of {totalQuestions}
           </p>
         </div>
         <div className="text-right">
-          <div className="text-sm text-gray-600">Answered</div>
-          <div className="text-lg font-bold text-blue-600">
+          <div className="text-xs sm:text-sm text-gray-600">Answered</div>
+          <div className="text-base sm:text-lg font-bold text-blue-600">
             {userAnswers.length}/{totalQuestions}
           </div>
         </div>
@@ -375,9 +375,9 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
       </div>
 
       {/* Question */}
-      <div className="mb-6">
-        <div className="flex items-start justify-between mb-4">
-          <h3 className="text-xl font-semibold">Q{currentQuestionIndex + 1}. {currentQuestion.question}</h3>
+      <div className="mb-4 sm:mb-6">
+        <div className="flex items-start justify-between mb-3 sm:mb-4">
+          <h3 className="text-base sm:text-lg lg:text-xl font-semibold pr-2">Q{currentQuestionIndex + 1}. {currentQuestion.question}</h3>
           <span className={`text-xs px-2 py-1 rounded whitespace-nowrap ml-2 ${
             currentQuestion.type === 'mcq' ? 'bg-blue-100 text-blue-700' :
             currentQuestion.type === 'saq' ? 'bg-yellow-100 text-yellow-700' :
@@ -425,7 +425,7 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
         )}
 
         {/* Metadata */}
-        <div className="mt-4 flex items-center gap-4 text-sm text-gray-600">
+        <div className="mt-3 sm:mt-4 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
           <span>📚 Topic: {currentQuestion.topic}</span>
           <span>📄 Page: {currentQuestion.pageNumbers.join(', ')}</span>
           <span>⭐ Difficulty: {currentQuestion.difficulty}</span>
@@ -433,24 +433,26 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
       </div>
 
       {/* Navigation */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <button
           onClick={goToPrevious}
           disabled={currentQuestionIndex === 0}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
         >
           <ChevronLeft className="w-4 h-4" />
-          Previous
+          <span className="hidden sm:inline">Previous</span>
+          <span className="sm:hidden">Prev</span>
         </button>
 
         {currentQuestionIndex === totalQuestions - 1 ? (
           <button
             onClick={handleSubmit}
             disabled={userAnswers.length === 0 && !currentAnswer.trim()}
-            className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold"
+            className="flex items-center gap-1 sm:gap-2 px-4 sm:px-6 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-sm sm:text-base"
           >
             <Send className="w-4 h-4" />
-            Submit Quiz
+            <span className="hidden sm:inline">Submit Quiz</span>
+            <span className="sm:hidden">Submit</span>
             {(userAnswers.length + (currentAnswer.trim() ? 1 : 0)) < totalQuestions && (
               <span className="text-xs ml-2">
                 ({totalQuestions - userAnswers.length - (currentAnswer.trim() ? 1 : 0)} unanswered)
@@ -460,7 +462,7 @@ const InteractiveQuiz: React.FC<InteractiveQuizProps> = ({ questions, onClose })
         ) : (
           <button
             onClick={goToNext}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="flex items-center gap-1 sm:gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm sm:text-base"
           >
             Next
             <ChevronRight className="w-4 h-4" />

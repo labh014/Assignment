@@ -4,21 +4,21 @@ import { FileQuestion, BookOpen, Sparkles, MessageSquare } from 'lucide-react'
 const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-6xl mx-auto px-4 py-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-8 sm:mb-12 lg:mb-16">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
             Quiz Generator
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-2xl mx-auto px-4">
             Transform your PDFs into interactive quizzes powered by AI. 
             Generate MCQs, Short Answer, and Long Answer questions automatically.
           </p>
         </div>
 
         {/* Main Features */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
-          <Link to="/quiz" className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 mb-8 sm:mb-12 lg:mb-16">
+          <Link to="/quiz" className="bg-white rounded-xl shadow-lg p-6 sm:p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-blue-500">
             <div className="bg-blue-100 w-16 h-16 rounded-lg flex items-center justify-center mb-4">
               <FileQuestion className="w-8 h-8 text-blue-600" />
             </div>
@@ -33,7 +33,7 @@ const Home = () => {
             </div>
           </Link>
 
-          <Link to="/chat" className="bg-white rounded-xl shadow-lg p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500">
+          <Link to="/chat" className="bg-white rounded-xl shadow-lg p-6 sm:p-8 hover:shadow-2xl transition-all transform hover:-translate-y-1 border-2 border-transparent hover:border-green-500">
             <div className="bg-green-100 w-16 h-16 rounded-lg flex items-center justify-center mb-4">
               <MessageSquare className="w-8 h-8 text-green-600" />
             </div>
@@ -50,7 +50,7 @@ const Home = () => {
         </div>
 
         {/* Additional Features */}
-        <div className="grid md:grid-cols-3 gap-6 mb-16">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 mb-8 sm:mb-12 lg:mb-16">
           <div className="bg-white rounded-lg shadow p-4 text-center">
             <div className="bg-purple-100 w-10 h-10 rounded-lg flex items-center justify-center mb-3 mx-auto">
               <Sparkles className="w-5 h-5 text-purple-600" />
@@ -83,23 +83,23 @@ const Home = () => {
         </div>
 
         {/* CTA */}
-        <div className="text-center space-x-4">
+        <div className="text-center flex flex-col sm:flex-row justify-center gap-4 sm:space-x-4">
           <Link
             to="/quiz"
-            className="inline-block bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+            className="inline-block bg-blue-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl w-full sm:w-auto"
           >
             Generate Quiz
           </Link>
           <Link
             to="/chat"
-            className="inline-block bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl"
+            className="inline-block bg-green-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-green-700 transition-colors shadow-lg hover:shadow-xl w-full sm:w-auto"
           >
             Chat with PDFs
           </Link>
         </div>
 
         {/* How it Works */}
-        <div className="mt-20">
+        <div className="mt-12 sm:mt-16 lg:mt-20">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">
             How It Works
           </h2>
