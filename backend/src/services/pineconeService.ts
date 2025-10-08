@@ -7,7 +7,50 @@ const pc = new Pinecone({
 
 const INDEX_NAME = 'test-data';
 
-// Text chunking function
+// Page-based chunking function with smart merging
+export function chunkTextByPages(pages: Array<{ pageNumber: number; text: string }>, minWords: number = 100): Array<{ text: string; pageNumbers: number[] }> {
+  const chunks: Array<{ text: string; pageNumbers: number[] }> = [];
+  let currentChunk = '';
+  let currentPages: number[] = [];
+  
+  for (let i = 0; i < pages.length; i++) {
+    const page = pages[i];
+    const wordCount = page.text.split(/\s+/).filter(Boolean).length;
+    
+    // Add current page to chunk
+    currentChunk += (currentChunk ? '\n\n' : '') + `[Page ${page.pageNumber}]\n${page.text}`;
+    currentPages.push(page.pageNumber);
+    
+    const totalWords = currentChunk.split(/\s+/).filter(Boolean).length;
+    
+    // Check if we should finalize this chunk
+    const isLastPage = i === pages.length - 1;
+    const nextPageWords = i < pages.length - 1 ? pages[i + 1].text.split(/\s+/).filter(Boolean).length : 0;
+    const shouldMergeNext = totalWords < minWords && nextPageWords < minWords;
+    
+    if (isLastPage || (!shouldMergeNext && totalWords >= minWords)) {
+      // Finalize current chunk
+      chunks.push({
+        text: currentChunk,
+        pageNumbers: [...currentPages]
+      });
+      currentChunk = '';
+      currentPages = [];
+    }
+  }
+  
+  // Add any remaining chunk
+  if (currentChunk && currentPages.length > 0) {
+    chunks.push({
+      text: currentChunk,
+      pageNumbers: currentPages
+    });
+  }
+  
+  return chunks;
+}
+
+// Original text chunking function (fallback for non-page-based content)
 export function chunkText(text: string, chunkSize: number = 1000, overlap: number = 200): string[] {
   const chunks: string[] = [];
   let start = 0;

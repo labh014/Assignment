@@ -2,7 +2,18 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
-import { uploadPDF, queryChatbot, listNamespaces } from '../controllers/chatController.js';
+import { 
+  uploadPDF, 
+  queryChatbot, 
+  listNamespaces, 
+  getConversationHistory, 
+  getAllConversations, 
+  createConversation, 
+  deleteConversation,
+  getPDFUrlByNamespace,
+  migrateExistingPDFs,
+  updateConversationsWithLocalFiles
+} from '../controllers/chatController.js';
 
 const router = express.Router();
 
@@ -36,6 +47,19 @@ const upload = multer({
 router.post('/upload', upload.single('pdf'), uploadPDF);
 router.post('/query', queryChatbot);
 router.get('/namespaces', listNamespaces);
+
+// Conversation management routes
+router.get('/conversations', getAllConversations);
+router.get('/conversations/:namespace', getConversationHistory);
+router.post('/conversations', createConversation);
+router.delete('/conversations/:conversationId', deleteConversation);
+
+// PDF URL routes
+router.get('/pdf/:namespace', getPDFUrlByNamespace);
+
+// Migration routes
+router.post('/migrate', migrateExistingPDFs);
+router.post('/update-local-files', updateConversationsWithLocalFiles);
 
 export default router;
 

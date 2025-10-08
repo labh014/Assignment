@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import quizRoutes from './routes/quizRoutes.js';
 import chatRoutes from './routes/chatRoutes.js';
+import { connectToMongoDB } from './services/mongodbService.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -48,12 +49,23 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📝 API Health: http://localhost:${PORT}/api/health`);
-  console.log(`🎯 Quiz API: http://localhost:${PORT}/api/quiz/generate`);
-  console.log(`💬 Chat API: http://localhost:${PORT}/api/chat`);
-  
-  
-});
+// Connect to MongoDB and start server
+async function startServer() {
+  try {
+    await connectToMongoDB();
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`📝 API Health: http://localhost:${PORT}/api/health`);
+      console.log(`🎯 Quiz API: http://localhost:${PORT}/api/quiz/generate`);
+      console.log(`💬 Chat API: http://localhost:${PORT}/api/chat`);
+      console.log(`🗄️ MongoDB: Connected to Atlas`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 

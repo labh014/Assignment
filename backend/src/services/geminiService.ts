@@ -38,11 +38,6 @@ export async function generateBatchQuestions(
 ): Promise<BatchQuizResult> {
   const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
   
-  const totalQuestions = Math.ceil(pageNumbers.length * questionsPerPage);
-  const mcqCount = Math.ceil(totalQuestions * 0.6); // 60% MCQs
-  const saqCount = Math.ceil(totalQuestions * 0.3); // 30% SAQs
-  const laqCount = Math.max(1, totalQuestions - mcqCount - saqCount); // Rest LAQs
-  
   const prompt = `You are an expert educator creating quiz questions from educational content.
 
 ${previousSummary ? `Previous context summary:\n${previousSummary}\n\n` : ''}
@@ -50,21 +45,31 @@ ${previousSummary ? `Previous context summary:\n${previousSummary}\n\n` : ''}
 Current content from pages ${pageNumbers.join(', ')}:
 ${batchText}
 
-Generate ${totalQuestions} high-quality quiz questions:
-- ${mcqCount} Multiple Choice Questions (MCQs)
-- ${saqCount} Short Answer Questions (SAQs) 
-- ${laqCount} Long Answer Questions (LAQs)
+INSTRUCTIONS - READ CAREFULLY:
+1. **Analyze Content Depth**: Carefully assess how much substantial content is present
+2. **Quality Over Quantity**: ONLY generate questions if there's enough meaningful content
+3. **Adaptive Question Count**: 
+   - Rich content (lots of concepts/details): Up to ${pageNumbers.length * 3} questions
+   - Moderate content: 1-2 questions per page
+   - Sparse content (definitions, examples only): 0-1 questions per page
+   - Very sparse content (minimal text): Skip if necessary
+4. **Smart Distribution**: Aim for ~60% MCQs, ~30% SAQs, ~10% LAQs (adjust if needed)
+5. **Content-Based Only**: NEVER make up questions - only use what's actually in the text
+6. **Avoid Redundancy**: Don't ask similar questions about the same concept
 
-Requirements:
-1. Cover key concepts from this section
-2. Consider the previous context for continuity (if provided)
-3. Vary difficulty levels (easy, medium, hard)
-4. MCQs should have 4 options (A, B, C, D)
-5. Each question should test understanding, not just memorization
-6. Provide clear explanations for correct answers
+Quality Standards:
+✓ Test actual understanding, not memorization
+✓ Cover key concepts and important details
+✓ Include varied difficulty levels (easy, medium, hard)
+✓ MCQs must have 4 distinct, plausible options
+✓ Each option should be reasonable (avoid obvious wrong answers)
+✓ Provide educational explanations that add value
+✓ Questions should be clear and unambiguous
+
+If content is too sparse or repetitive, generate FEWER high-quality questions rather than forcing poor-quality ones.
 
 Also provide:
-1. A brief summary (80-120 words) of key concepts covered in these pages
+1. A brief summary (80-120 words) of key concepts covered
 2. List of main topics/themes (3-5 topics)
 
 **IMPORTANT**: Respond ONLY with valid JSON. No markdown, no code blocks, just raw JSON.
@@ -87,7 +92,7 @@ Also provide:
 }`;
 
   try {
-    console.log(`🤖 Generating ${totalQuestions} questions for pages ${pageNumbers.join(', ')}...`);
+    console.log(`🤖 Generating adaptive quiz questions for pages ${pageNumbers.join(', ')}...`);
     
     const result = await model.generateContent(prompt);
     const response = result.response;
@@ -176,7 +181,7 @@ Mix question types (MCQs, SAQs, LAQs) and difficulty levels.
 
 /**
  * Generate intelligent chat response using RAG results
- * Takes top 2 Pinecone results and user query to generate contextual answer
+ * Takes top 3-5 Pinecone results and user query to generate contextual answer
  */
 export async function generateChatResponse(
   userQuery: string,
@@ -190,13 +195,16 @@ export async function generateChatResponse(
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
-    // Prepare context from top 2 results
-    const contextText = ragResults
-      .slice(0, 2) // Take top 2 results
+    // Use top 3-5 results based on relevance scores
+    const topChunksCount = ragResults.length >= 5 ? 5 : Math.max(3, ragResults.length);
+    const topResults = ragResults.slice(0, topChunksCount);
+
+    // Prepare context from top results (without relevance scores)
+    const contextText = topResults
       .map((result, index) => 
-        `[Source ${index + 1}] (Relevance: ${(result.score * 100).toFixed(1)}%)\n${result.text}`
+        `[Source ${index + 1}]\n${result.text}`
       )
-      .join('\n\n');
+      .join('\n\n---\n\n');
 
     const prompt = `
 You are an intelligent AI assistant that helps users understand documents through RAG (Retrieval-Augmented Generation).
@@ -208,19 +216,35 @@ USER QUESTION:
 ${userQuery}
 
 INSTRUCTIONS:
-1. Analyze the provided context carefully
-2. Use ONLY the information from the context to answer the user's question
-3. If the context doesn't contain enough information to answer the question, clearly state this
-4. Provide a comprehensive, well-structured answer
-5. Include relevant details and examples from the context
-6. Be conversational and helpful
-7. If you reference specific information, mention which source it came from
+1. **Primary Goal**: Answer the user's question using the provided context
+2. **If Direct Answer Found**: Provide a comprehensive response based on the context
+3. **If Answer Not Directly Found**: 
+   - Still provide a helpful response
+   - Use related information from the context
+   - Make intelligent connections to the user's question
+   - Explain what information IS available that relates to their query
+4. **If Context is Completely Unrelated**:
+   - Acknowledge the limitation
+   - Summarize what the document DOES contain
+   - Suggest related questions that CAN be answered
+5. **Always Be Helpful**: Never just say "I can't answer" - always try to provide value
 
-RESPONSE FORMAT:
-- Provide a clear, detailed answer
-- Use the context information effectively
-- Be honest about limitations if context is insufficient
-- Maintain a helpful, professional tone
+RESPONSE GUIDELINES:
+✓ Be conversational and friendly
+✓ Provide detailed, well-structured answers
+✓ Reference sources naturally (e.g., "According to Source 1...")
+✓ Make connections between user's question and available content
+✓ If making inferences, clearly indicate so
+✓ Offer to clarify or answer related questions
+✓ Maintain professional, educational tone
+✓ Write naturally - DO NOT mention relevance scores, confidence levels, or technical retrieval metrics
+✓ DO NOT say things like "based on the relevance" or "the confidence of this information"
+✓ Present information as if you're explaining from the document directly
+
+IMPORTANT: 
+- Your goal is to be maximally helpful while being honest about the limitations of the provided context
+- Never mention technical aspects like "relevance scores", "chunk quality", or "confidence levels"
+- Just provide natural, helpful answers as if you've read the document
 
 Please provide your response:`;
 
@@ -228,16 +252,18 @@ Please provide your response:`;
     const response = await result.response;
     const answer = response.text();
 
-    // Determine confidence based on relevance scores
-    const avgScore = ragResults.slice(0, 2).reduce((sum, r) => sum + r.score, 0) / 2;
+    // Determine confidence based on relevance scores of top results
+    const avgScore = topResults.reduce((sum, r) => sum + r.score, 0) / topResults.length;
     let confidence: 'high' | 'medium' | 'low' = 'low';
     if (avgScore > 0.7) confidence = 'high';
     else if (avgScore > 0.4) confidence = 'medium';
 
-    // Extract sources
-    const sources = ragResults
-      .slice(0, 2)
-      .map(r => `${r.filename} (chunk ${r.chunkIndex})`);
+    // Extract sources (clean format without technical metrics)
+    const sources = topResults.map((r, idx) => 
+      `${r.filename}`
+    );
+
+    console.log(`✅ Generated response using ${topResults.length} chunks with ${avgScore.toFixed(2)} avg relevance`);
 
     return {
       answer: answer,

@@ -60,11 +60,33 @@ const PDFViewer: React.FC<PDFViewerProps> = ({ pdfUrl, filename }) => {
     setPageNumber(1)
   }
 
-  if (!pdfUrl || !filename) {
+  if (!pdfUrl) {
+    return (
+      <div className="h-full flex items-center justify-center bg-gray-50 border-l border-gray-200">
+        <div className="text-center text-gray-500 p-6">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-lg flex items-center justify-center text-3xl">
+            📄
+          </div>
+          {filename ? (
+            <>
+              <p className="font-medium text-gray-700 mb-2">{filename}</p>
+              <p className="text-sm">PDF not available for viewing</p>
+              <p className="text-xs mt-2">This PDF was uploaded before cloud storage was enabled.</p>
+              <p className="text-xs text-blue-600 mt-2">💡 Re-upload the PDF to enable viewing</p>
+            </>
+          ) : (
+            <p>No PDF selected</p>
+          )}
+        </div>
+      </div>
+    )
+  }
+  
+  if (!filename) {
     return (
       <div className="h-full flex items-center justify-center bg-gray-50 border-l border-gray-200">
         <div className="text-center text-gray-500">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-lg flex items-center justify-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gray-200 rounded-lg flex items-center justify-center text-3xl">
             📄
           </div>
           <p className="text-lg font-medium">No PDF Selected</p>
