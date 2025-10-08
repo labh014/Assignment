@@ -43,7 +43,7 @@ const QuizGenerator = () => {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<QuizResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [questionsPerPage, setQuestionsPerPage] = useState(2)
+  const [questionsPerPage] = useState(2)
   const [batchSize, setBatchSize] = useState(3)
   const [uploadedPDFs, setUploadedPDFs] = useState<UploadedPDF[]>([])
   const [selectedPDF, setSelectedPDF] = useState<string | null>(null)
