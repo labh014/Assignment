@@ -1,6 +1,6 @@
 // API Configuration
-// Uses environment variable if available, otherwise defaults to localhost
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Uses environment variable if available, otherwise defaults to production backend
+export const API_URL = import.meta.env.VITE_API_URL || 'https://assignment-sobr.onrender.com';
 
 // API Endpoints
 export const API_ENDPOINTS = {
