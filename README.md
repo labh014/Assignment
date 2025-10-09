@@ -3,7 +3,6 @@
 
 > **Built for:** BeyondChats Hiring Assignment  
 > **Date:** October 2025  
-> **Developer:** Built with extensive AI assistance (Claude/Cursor AI)  
 > **Tech Stack:** React, TypeScript, Express, Gemini 2.0, Pinecone, MongoDB, Cloudinary
 
 ---
